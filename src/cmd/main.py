@@ -259,33 +259,35 @@ class Plot():
 def doOne(l):
     p = Plot(l[0], l[1], l[2]).save(l[3])
 
-Config.instance()
-
-pbar = tqdm.tqdm(total = len(FLs) * len(sensors.keys()))
-pool = Pool(Config.instance().procs)
-args = []
-res = []
 
 def pbarUpdate(bla):
     pbar.update(1)
 
-if not os.path.exists(Config.instance().outDir):
-    os.makedirs(Config.instance().outDir)
 
-for fl in FLs:
-    for sensor in sensors:
-        outFile = os.path.join(Config.instance().outDir, "{:d}mm_{}.jpg".format(int(fl), sensor))
-        if os.path.exists(outFile):
-            if Config.instance().clobber:
-                os.remove(outFile)
-            else:
-                raise RuntimeError("{} already exists (forgot to set --clobber?".format(outFile))
-        args.append([fl, sensors[sensor][0], sensors[sensor][1], outFile])
-        res.append(pool.apply_async(doOne, args=[args[-1]], callback=pbarUpdate))
-
-for r in res:
-    r.get()
-
-pbar.close()
-pool.close()
-pool.join()
+if __name__ == "__main__":
+    Config.instance()
+    pbar = tqdm.tqdm(total = len(FLs) * len(sensors.keys()))
+    pool = Pool(Config.instance().procs)
+    args = []
+    res = []
+    
+    if not os.path.exists(Config.instance().outDir):
+        os.makedirs(Config.instance().outDir)
+    
+    for fl in FLs:
+        for sensor in sensors:
+            outFile = os.path.join(Config.instance().outDir, "{:d}mm_{}.jpg".format(int(fl), sensor))
+            if os.path.exists(outFile):
+                if Config.instance().clobber:
+                    os.remove(outFile)
+                else:
+                    raise RuntimeError("{} already exists (forgot to set --clobber?".format(outFile))
+            args.append([fl, sensors[sensor][0], sensors[sensor][1], outFile])
+            res.append(pool.apply_async(doOne, args=[args[-1]], callback=pbarUpdate))
+    
+    for r in res:
+        r.get()
+    
+    pbar.close()
+    pool.close()
+    pool.join()
