@@ -259,6 +259,8 @@ class Plot():
 def doOne(l):
     p = Plot(l[0], l[1], l[2]).save(l[3])
 
+Config.instance()
+
 pbar = tqdm.tqdm(total = len(FLs) * len(sensors.keys()))
 pool = Pool(Config.instance().procs)
 args = []
@@ -285,4 +287,5 @@ for r in res:
     r.get()
 
 pbar.close()
-pbar.join()
+pool.close()
+pool.join()
