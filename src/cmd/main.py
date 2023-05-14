@@ -210,7 +210,7 @@ class Plot():
     def __loadImages(self):
         #self.hipsData = make_sky_image(self.__geometry, hipsName, 'jpg', precise=True)
         #self.img = self.hipsData.image
-        self.hipsData = hips2fits.query_with_wcs(hips=hipsName, wcs=self.__wcs, get_query_payload=False, format='jpg')
+        self.hipsData = hips2fits.query_with_wcs(hips=hipsName, wcs=self.__wcs, get_query_payload=False, format='jpg', min_cut=0., max_cut=100., stretch="linear")
         self.img = self.hipsData
         #self.redImg = np.flipud(self.hipsData[0].data[0,:,:])
         #self.greenImg = np.flipud(self.hipsData[0].data[1,:,:])
